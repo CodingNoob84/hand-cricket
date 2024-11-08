@@ -8,9 +8,10 @@ export default function ReviewPage() {
     return (
         <div className="flex-grow flex flex-col overflow-auto lg:overflow-auto lg:h-screen">
             <div className="flex flex-col gap-4 p-4">
-                <div className="flex flex-end justify-end">
+                <div className="flex flex-end justify-between px-4">
+                    <div className="text-xl font-extrabold">Review</div>
                     <Button asChild>
-                        <Link href={'/dashboard'}>back</Link>
+                        <Link href="/dashboard">back</Link>
                     </Button>
                 </div>
                 <h1 className="text-2xl font-bold mb-4">Write a Review</h1>
