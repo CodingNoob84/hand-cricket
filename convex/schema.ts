@@ -59,4 +59,24 @@ export default defineSchema({
     })
         .index('email', ['email'])
         .index('phone', ['phone']),
+
+    teams: defineTable({
+        userId: v.id('users'),
+        teamName: v.string(),
+        teamTagline: v.string(),
+    }),
+    matches: defineTable({
+        teamId: v.id('teams'),
+        userId: v.id('users'),
+        toss: v.optional(v.string()),
+        innings: v.optional(v.number()),
+        result: v.optional(v.string()),
+        resultBy: v.optional(v.string()),
+        userRuns: v.optional(v.number()),
+        userWickets: v.optional(v.number()),
+        userBalls: v.optional(v.number()),
+        botRuns: v.optional(v.number()),
+        botWickets: v.optional(v.number()),
+        botBalls: v.optional(v.number()),
+    }),
 })

@@ -23,7 +23,7 @@ export const HeroSection = () => {
             </Button>
 
             <Image
-                src="/images/hand-cricket-banner.jpg"
+                src="/images/hand-cricket-banner.png"
                 alt="Hand Cricket Banner"
                 width={500}
                 height={300}

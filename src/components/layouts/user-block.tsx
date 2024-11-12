@@ -1,5 +1,5 @@
 'use client'
-import { useCurrentUser } from '@/hooks/use-current-user'
+import { useCurrentUser } from '@/api-hooks/use-current-user'
 import { getInitials } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'

@@ -42,11 +42,6 @@ export default function RulesPage() {
                             </h2>
                             <ul className="list-disc list-inside text-gray-700 mb-4">
                                 <li>
-                                    <strong>Players:</strong> Each team consists
-                                    of 5 players. Both teams take turns batting
-                                    and bowling.
-                                </li>
-                                <li>
                                     <strong>Match Format:</strong> The game has
                                     two innings – one for batting and one for
                                     bowling per team. The goal is to set a
@@ -116,8 +111,8 @@ export default function RulesPage() {
                                 Scoring
                             </h2>
                             <p className="text-gray-700">
-                                Use hand gestures or select numbers on screen to
-                                represent:
+                                Use hand gestures such as select numbers on
+                                screen to represent:
                             </p>
                             <ul className="list-disc list-inside text-gray-700">
                                 <li>

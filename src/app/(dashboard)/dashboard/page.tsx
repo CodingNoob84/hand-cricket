@@ -1,3 +1,4 @@
+import { CreateTeam } from '@/components/dashboard/create-edit-block'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -14,9 +15,9 @@ export default function DashBoardPage() {
                     </Button>
                 </div>
                 <div className="flex justify-center">
-                    {/* <TeamCard
-                userId={'b949a8d3-6609-4420-bbf0-0ac85961bcf1'}
-            /> */}
+                    <CreateTeam />
+                    {/* <CreateOrEditTeam isEdit={false} /> */}
+                    {/* <TeamCard isLoading={false} /> */}
                 </div>
                 <div className="flex justify-center items-center">
                     <Button className="w-full max-w-md" asChild>

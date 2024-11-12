@@ -1,8 +1,7 @@
+import { StartGame } from '@/components/bot/start-game'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { CardTitle } from '@/components/ui/card'
 import { getInitials } from '@/lib/utils'
-import { Play } from 'lucide-react'
 import Link from 'next/link'
 
 export default function BotPage() {
@@ -18,38 +17,25 @@ export default function BotPage() {
                     </Button>
                 </div>
                 <div className="flex flex-col gap-4">
-                    <div className="w-full flex justify-center items-center max-w-md mx-auto rounded-xl border bg-card text-card-foreground shadow">
-                        <div className="flex flex-row items-center my-4 gap-4">
+                    <div className="w-full flex flex-col p-4 justify-center items-center mx-auto rounded-xl border bg-card text-card-foreground shadow">
+                        <div>You are playing against</div>
+                        <div className="w-full flex flex-row justify-center items-center my-4 gap-4">
                             <Avatar className="h-14 w-14 text-black">
                                 <AvatarFallback className="text-black">
-                                    {getInitials('Chennai Supper Kings')}
+                                    {getInitials('Xabara Bot')}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
-                                <CardTitle className="text-xl">
-                                    Chennai Supper Kings
-                                </CardTitle>
+                                <div className="text-md">Xabara Bot</div>
                                 <p className="text-sm text-muted-foreground">
-                                    Owned by karthik
+                                    Owner of Dark Devils
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className="w-full flex justify-center items-center max-w-md mx-auto rounded-xl border bg-card text-card-foreground shadow">
-                        <div className="w-full flex flex-col items-center my-4 gap-4 px-4">
-                            <div>Playing 5</div>
-                            <div className="border border-b-gray-500 w-full"></div>
-                            <div>Player 1</div>
-                            <div>Player 2</div>
-                            <div>Player 3</div>
-                            <div>Player 4</div>
-                            <div>Player 5</div>
-                        </div>
-                    </div>
+
                     <div className="flex justify-center items-center mt-10">
-                        <Button>
-                            <Play /> Start
-                        </Button>
+                        <StartGame />
                     </div>
                 </div>
             </div>

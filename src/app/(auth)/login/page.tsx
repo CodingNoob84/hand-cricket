@@ -7,7 +7,7 @@ export default function LoginPage() {
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
                 <div className="flex justify-center mb-6">
                     <Image
-                        src="/images/hand-cricket-logo.png"
+                        src="/images/hand-cricket-logo.PNG"
                         alt="Hand Cricket Logo"
                         width={100}
                         height={40}
