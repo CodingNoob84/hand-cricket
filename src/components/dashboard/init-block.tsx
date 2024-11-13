@@ -11,7 +11,7 @@ import { CreateTeam } from './create-edit-block'
 export const DashboardInitBlock = () => {
     const { teamData, userData, isLoading } = useTeam()
     const initUser = useUserStore((state) => state.initUser)
-    const user = useUserStore((state) => state.user)
+
     useEffect(() => {
         if (!isLoading && userData && teamData) {
             initUser(
@@ -22,51 +22,53 @@ export const DashboardInitBlock = () => {
                     email: userData.email ?? '',
                 },
                 {
-                    teamId: teamData._id,
-                    teamName: teamData.teamName,
-                    teamTagline: teamData.teamTagline,
+                    teamId: teamData?._id,
+                    teamName: teamData?.teamName,
+                    teamTagline: teamData?.teamTagline,
                 }
             )
         }
     }, [isLoading, userData, teamData, initUser])
 
+    if (isLoading) {
+        return <LoaderPage />
+    }
+
+    if (!teamData) {
+        return (
+            <div className="flex justify-center">
+                <CreateTeam />
+            </div>
+        )
+    }
+
     return (
-        <>
-            {user ? (
-                <div className="flex flex-col gap-4">
-                    <div className="flex justify-center">
-                        <CreateTeam />
-                    </div>
-                    <div className="flex justify-center items-center">
-                        <Button className="w-full max-w-md" asChild>
-                            <Link href="/dashboard/bot">Play with our Bot</Link>
-                        </Button>
-                    </div>
-                    <div className="flex justify-center items-center">
-                        <Button className="w-full max-w-md" asChild>
-                            <Link href="/dashboard/friends">
-                                Play with your friends
-                            </Link>
-                        </Button>
-                    </div>
-                    <div className="flex justify-center items-center">
-                        <Button className="w-full max-w-md" asChild>
-                            <Link href="/dashboard/matchhistory">
-                                Match History
-                            </Link>
-                        </Button>
-                    </div>
-                    <div className="flex justify-center items-center">
-                        <Button className="w-full max-w-md" asChild>
-                            <Link href="/dashboard/review">
-                                Give us a Review
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
-            ) : (
-                <LoaderPage />
-            )}
-        </>
+        <div className="flex flex-col gap-4">
+            <div className="flex justify-center">
+                <CreateTeam />
+            </div>
+            <div className="flex justify-center items-center">
+                <Button className="w-full max-w-md" asChild>
+                    <Link href="/dashboard/bot">Play with our Bot</Link>
+                </Button>
+            </div>
+            <div className="flex justify-center items-center">
+                <Button className="w-full max-w-md" asChild>
+                    <Link href="/dashboard/friends">
+                        Play with your friends
+                    </Link>
+                </Button>
+            </div>
+            <div className="flex justify-center items-center">
+                <Button className="w-full max-w-md" asChild>
+                    <Link href="/dashboard/matchhistory">Match History</Link>
+                </Button>
+            </div>
+            <div className="flex justify-center items-center">
+                <Button className="w-full max-w-md" asChild>
+                    <Link href="/dashboard/review">Give us a Review</Link>
+                </Button>
+            </div>
+        </div>
     )
 }
