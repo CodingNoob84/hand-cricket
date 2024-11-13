@@ -1,4 +1,5 @@
 'use client'
+import { InitMatches } from '@/components/history/init-maches'
 import { ListMatches } from '@/components/history/list-matches'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -13,6 +14,7 @@ export default function MatchHistory() {
                         <Link href="/dashboard">back</Link>
                     </Button>
                 </div>
+                <InitMatches />
                 <ListMatches />
             </div>
         </div>

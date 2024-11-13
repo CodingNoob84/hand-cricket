@@ -1,6 +1,7 @@
 'use client'
 
-import { useTeam } from '@/api-hooks/use-current-user'
+import { getInitials } from '@/lib/utils'
+import { UserTeamData, useUserStore } from '@/store/user-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from 'convex/react'
 import { Edit } from 'lucide-react'
@@ -8,6 +9,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { api } from '../../../convex/_generated/api'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
 import {
     Form,
@@ -26,7 +28,6 @@ import {
     ModalTitle,
 } from '../ui/modal'
 import { Textarea } from '../ui/textarea'
-import { TeamCard, TeamData } from './team-card'
 
 // Define Zod schema
 const TeamformSchema = z.object({
@@ -44,29 +45,36 @@ const TeamformSchema = z.object({
 // Consolidated Form for Creating/Editing a Team
 export const CreateEditForm = ({
     isEdit,
-    teamData,
+    userData,
+    setOpen,
 }: {
     isEdit: boolean
-    teamData: TeamData | null
+    userData: UserTeamData | null
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
     //console.log('form', isEdit, teamData)
+    const [isLoading, setIsLoading] = useState(false)
     const createUpdate = useMutation(api.teams.createOrUpdateTeam)
     const form = useForm<z.infer<typeof TeamformSchema>>({
         resolver: zodResolver(TeamformSchema),
         defaultValues: {
-            teamId: teamData?._id || '',
-            teamName: teamData?.teamName || '',
-            teamTagline: teamData?.teamTagline || '',
+            teamId: userData?.teamId || '',
+            teamName: userData?.teamName || '',
+            teamTagline: userData?.teamTagline || '',
         },
     })
 
     async function onSubmit(values: z.infer<typeof TeamformSchema>) {
-        await createUpdate({
+        setIsLoading(true)
+        const result = await createUpdate({
             //teamId: isEdit ? values.teamId : undefined,
             teamName: values.teamName,
             teamTagline: values.teamTagline,
         })
-        // Close the modal or perform additional actions here
+        if (result.status == 'updated' || result.status == 'created') {
+            setIsLoading(false)
+            setOpen(false)
+        }
     }
 
     return (
@@ -108,8 +116,16 @@ export const CreateEditForm = ({
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full">
-                    {isEdit ? 'Update Team' : 'Create Team'}
+                <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading} // Disable button while loading
+                >
+                    {isLoading
+                        ? 'Loading'
+                        : isEdit
+                          ? 'Update Team'
+                          : 'Create Team'}
                 </Button>
             </form>
         </Form>
@@ -119,27 +135,40 @@ export const CreateEditForm = ({
 // Component to Create a New Team
 export const CreateTeam = () => {
     const [open, setOpen] = useState(false)
-    const { teamData, userData, isLoading } = useTeam()
-    console.log('create', teamData)
+    const userData = useUserStore((state) => state.user)
+    //console.log('create', userData)
 
-    if (isLoading) {
+    if (userData?.teamId) {
         return (
-            <TeamCard
-                isEdit={true}
-                isLoading={isLoading}
-                userData={null}
-                teamData={null}
-            />
-        )
-    }
-    if (teamData) {
-        return (
-            <TeamCard
-                isEdit={true}
-                isLoading={isLoading}
-                userData={userData}
-                teamData={teamData}
-            />
+            <div className="w-full flex justify-center items-center max-w-md mx-auto rounded-xl border bg-card text-card-foreground shadow">
+                <div className="w-full flex flex-col gap-4 my-4 px-4">
+                    <div className="flex flex-row items-center justify-between gap-4">
+                        <div className="flex flex-row items-center gap-4">
+                            <Avatar className="h-14 w-14 text-black">
+                                <AvatarImage
+                                    src={userData.userImage}
+                                    alt={userData.userName}
+                                />
+                                <AvatarFallback className="text-black">
+                                    {getInitials(userData.userName)}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                                <div className="text-md font-semibold">
+                                    {userData.userName}
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    Owner of {userData.teamName}
+                                </p>
+                            </div>
+                        </div>
+                        <EditTeam userData={userData} />
+                    </div>
+                    <div>
+                        <p className="text-gray-700">{userData.teamTagline}</p>
+                    </div>
+                </div>
+            </div>
         )
     }
 
@@ -155,7 +184,11 @@ export const CreateTeam = () => {
                         <ModalTitle>Create Team</ModalTitle>
                     </ModalHeader>
                     <ModalBody className="h-full">
-                        <CreateEditForm isEdit={false} teamData={null} />
+                        <CreateEditForm
+                            isEdit={false}
+                            userData={null}
+                            setOpen={setOpen}
+                        />
                     </ModalBody>
                 </ModalContent>
             </Modal>
@@ -164,7 +197,7 @@ export const CreateTeam = () => {
 }
 
 // Component to Edit an Existing Team
-export const EditTeam = ({ teamData }: { teamData: TeamData }) => {
+export const EditTeam = ({ userData }: { userData: UserTeamData }) => {
     const [open, setOpen] = useState(false)
 
     return (
@@ -184,7 +217,11 @@ export const EditTeam = ({ teamData }: { teamData: TeamData }) => {
                         <ModalTitle>Edit Team</ModalTitle>
                     </ModalHeader>
                     <ModalBody className="h-full">
-                        <CreateEditForm isEdit={true} teamData={teamData} />
+                        <CreateEditForm
+                            isEdit={true}
+                            userData={userData}
+                            setOpen={setOpen}
+                        />
                     </ModalBody>
                 </ModalContent>
             </Modal>

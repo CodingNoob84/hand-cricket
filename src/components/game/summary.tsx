@@ -2,8 +2,13 @@
 
 import { convertToOvers, getPlayers, getPlayerScore } from '@/lib/utils'
 import { TeamData, useMatchStore } from '@/store/match-store'
+import { useMutation } from 'convex/react'
 import { ChevronsRight, Trophy, XCircle } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { api } from '../../../convex/_generated/api'
+import { Id } from '../../../convex/_generated/dataModel'
 
 interface Player {
     runs: number
@@ -24,6 +29,32 @@ interface ScoreCardProps {
 }
 
 export default function CricketSummary() {
+    const updateMatch = useMutation(api.matches.updateMatch)
+    const matchId = useMatchStore((state) => state.matchId)
+    const getData = useMatchStore((state) => state.toUpdateDB)
+    const data = getData()
+    //const [isLoading, setIsLoading] = useState(false)
+    const [show, setShow] = useState(false)
+
+    useEffect(() => {
+        // Only run if matchId and getData() are available
+        if (matchId && data) {
+            const updateMatchData = async () => {
+                try {
+                    await updateMatch({
+                        matchId: matchId as Id<'matches'>,
+                        data: data,
+                    })
+                } catch (error) {
+                    console.error('Error updating match:', error)
+                } finally {
+                    setShow(true)
+                }
+            }
+
+            updateMatchData()
+        }
+    }, [matchId, data, updateMatch])
     return (
         <div className="container mx-auto px-4 py-8 space-y-6">
             <div className="h-full">
@@ -41,14 +72,16 @@ export default function CricketSummary() {
                     <ResultBlock />
                 </div>
 
-                <div className="flex justify-center mt-6">
-                    <Link href="/dashboard" passHref>
-                        <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 rounded-md px-8 font-semibold text-sm sm:text-base">
-                            Back to Dashboard
-                            <ChevronsRight className="ml-2 h-4 w-4" />
-                        </button>
-                    </Link>
-                </div>
+                {show && (
+                    <div className="flex justify-center mt-6">
+                        <Link href="/dashboard" passHref>
+                            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 rounded-md px-8 font-semibold text-sm sm:text-base">
+                                Back to Dashboard
+                                <ChevronsRight className="ml-2 h-4 w-4" />
+                            </button>
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
     )
@@ -137,7 +170,7 @@ function ScoreCard({ title, icon, players }: ScoreCardProps) {
     return (
         <div className="border rounded-lg p-3 sm:p-4 min-w-[150px] flex-1">
             <h4 className="flex items-center text-sm sm:text-base font-semibold mb-2">
-                <img src={icon} alt={title} width="20" height="20" />
+                <Image src={icon} alt={title} width="20" height="20" />
                 <span className="ml-2">{title}</span>
             </h4>
             <div className="space-y-1 sm:space-y-2">

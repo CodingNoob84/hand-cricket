@@ -1,4 +1,4 @@
-import { CreateTeam } from '@/components/dashboard/create-edit-block'
+import { DashboardInitBlock } from '@/components/dashboard/init-block'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -14,35 +14,7 @@ export default function DashBoardPage() {
                         <Link href="/dashboard/rules">Rules</Link>
                     </Button>
                 </div>
-                <div className="flex justify-center">
-                    <CreateTeam />
-                    {/* <CreateOrEditTeam isEdit={false} /> */}
-                    {/* <TeamCard isLoading={false} /> */}
-                </div>
-                <div className="flex justify-center items-center">
-                    <Button className="w-full max-w-md" asChild>
-                        <Link href="/dashboard/bot">Play with our Bot</Link>
-                    </Button>
-                </div>
-                <div className="flex justify-center items-center">
-                    <Button className="w-full max-w-md" asChild>
-                        <Link href="/dashboard/friends">
-                            Play with your friends
-                        </Link>
-                    </Button>
-                </div>
-                <div className="flex justify-center items-center">
-                    <Button className="w-full max-w-md" asChild>
-                        <Link href="/dashboard/matchhistory">
-                            Match History
-                        </Link>
-                    </Button>
-                </div>
-                <div className="flex justify-center items-center">
-                    <Button className="w-full max-w-md" asChild>
-                        <Link href="/dashboard/review">Give us a Review</Link>
-                    </Button>
-                </div>
+                <DashboardInitBlock />
             </div>
         </div>
     )

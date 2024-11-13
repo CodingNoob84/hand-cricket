@@ -1,9 +1,18 @@
+import {
+    BALLSPEROVER,
+    BOT_RUNS,
+    BOT_THINKING,
+    TOTALOVERS,
+    TOTALWICKETS,
+} from '@/lib/contants'
 import { create } from 'zustand'
+import { Bot } from './bot-store'
+import { UserTeamData } from './user-store'
 
-const SECONDS_DELAY = 2
-const TOTALWICKETS = 2
-const TOTALOVERS = 1
-const BALLSPEROVER = 6
+export const getRandomNumber = () => {
+    const Numbers = BOT_RUNS
+    return Numbers[Math.floor(Math.random() * Numbers.length)]
+}
 
 // Helper function to initialize the batting array
 const initializeBattingArray = (wickets: number): Batting[] => {
@@ -65,7 +74,11 @@ export interface MatchStore {
     resultBy: string
     userTeam: TeamData
     botTeam: TeamData
-    InitMatch: (matchId: string, data: Partial<TeamData>) => void
+    InitMatch: (
+        matchId: string,
+        userdata: Partial<UserTeamData>,
+        botData: Partial<Bot>
+    ) => void
     updateToss: (toss: 'bat' | 'bowl' | '') => void
     getTeams: () => { userTeam: TeamData; botTeam: TeamData }
     setSelectedNumber: (number: number) => void
@@ -115,8 +128,11 @@ export const useMatchStore = create<MatchStore>((set, get) => ({
         bowling: initializeBowlingArray(TOTALOVERS),
     },
 
-    InitMatch: (matchId: string, data: Partial<TeamData>) => {
-        console.log('store', data)
+    InitMatch: (
+        matchId: string,
+        userdata: Partial<UserTeamData>,
+        botData: Partial<Bot>
+    ) => {
         set({
             matchId,
             systemNumber: 5,
@@ -128,11 +144,11 @@ export const useMatchStore = create<MatchStore>((set, get) => ({
             result: '',
             resultBy: '',
             userTeam: {
-                teamId: data.teamId || '',
-                teamName: data.teamName || 'Default Team',
-                teamTagline: data.teamTagline || 'No tagline provided',
-                username: data.username || 'Unknown User',
-                userimage: data.userimage || '/images/default-user.png',
+                teamId: userdata.teamId || '',
+                teamName: userdata.teamName || 'Default Team',
+                teamTagline: userdata.teamTagline || 'No tagline provided',
+                username: userdata.userName || 'Unknown User',
+                userimage: userdata.userImage || '/images/default-user.png',
                 isBatting: false,
                 totalRuns: 0,
                 totalWickets: 0,
@@ -142,11 +158,11 @@ export const useMatchStore = create<MatchStore>((set, get) => ({
                 bowling: initializeBowlingArray(TOTALOVERS),
             },
             botTeam: {
-                teamId: 'bot-team-id',
-                teamName: 'Bot Team',
-                teamTagline: 'Competing against you!',
-                username: 'Bot',
-                userimage: '/images/bot-image.png',
+                teamId: botData.botId || '0',
+                teamName: botData.botTeamName || 'Dark Devil',
+                teamTagline: botData.botTeamTagLine || 'Competing against you!',
+                username: botData.botName || 'Xabara Bot',
+                userimage: botData.botImage || '/images/bot-image.png',
                 isBatting: false,
                 totalRuns: 0,
                 totalWickets: 0,
@@ -199,7 +215,7 @@ export const useMatchStore = create<MatchStore>((set, get) => ({
                     systemNumber: BotNumber,
                 }
             })
-        }, SECONDS_DELAY * 1000)
+        }, BOT_THINKING * 1000)
     },
     getRunRate: () => {
         const { innings, userTeam, botTeam } = get()
@@ -377,9 +393,4 @@ const updateScore = (state: MatchStore, BotNumber: number) => {
         result,
         resultBy,
     }
-}
-
-export const getRandomNumber = () => {
-    const Numbers = [6]
-    return Numbers[Math.floor(Math.random() * Numbers.length)]
 }

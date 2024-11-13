@@ -1,8 +1,7 @@
 'use client'
+import { RUNS } from '@/lib/contants'
 import { useMatchStore } from '@/store/match-store'
 import { useState } from 'react'
-
-const RUNS = [0, 1, 2, 3, 4, 6]
 
 export const RunsBlock = () => {
     const isBatting = useMatchStore((state) => state.userTeam.isBatting)

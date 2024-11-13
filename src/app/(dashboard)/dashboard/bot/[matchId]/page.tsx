@@ -3,27 +3,28 @@
 import { LoaderPage } from '@/components/common/loader-page'
 import { GameLayout } from '@/components/game/game-layout'
 import { BatOrBowl } from '@/components/game/toss'
+import { useBotStore } from '@/store/bot-store'
 import { useMatchStore } from '@/store/match-store'
-import { useQuery } from 'convex/react'
+import { useUserStore } from '@/store/user-store'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { api } from '../../../../../../convex/_generated/api'
 
 export default function BotMatchPage() {
     const params = useParams<{ matchId: string }>()
     const toss = useMatchStore((state) => state.toss)
     const Init = useMatchStore((state) => state.InitMatch)
-    const data = useQuery(api.matches.getMatchData, { matchId: params.matchId })
+    const userData = useUserStore((state) => state.user)
+    const botData = useBotStore((state) => state.bot)
 
-    // Initialize the match when data and matchId are available
+    // Initialize the match when matchId, userData, and botData are available
     useEffect(() => {
-        if (params.matchId && data) {
-            Init(params.matchId, data)
+        if (params.matchId && userData && botData) {
+            Init(params.matchId, userData, botData)
         }
-    }, [params.matchId, data, Init]) // Include data in dependency array
+    }, [params.matchId, userData, botData, Init]) // Corrected dependency array
 
-    // Render LoaderPage if data is still loading
-    if (!data) {
+    // Render LoaderPage if matchId, userData, or botData are not available
+    if (!params.matchId || !userData || !botData) {
         return <LoaderPage />
     }
 

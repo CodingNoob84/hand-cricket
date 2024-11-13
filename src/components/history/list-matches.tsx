@@ -1,7 +1,6 @@
 'use client'
-import { useGetMatches } from '@/api-hooks/use-matches'
+import { useMatchListsStore } from '@/store/matches-store'
 import { Calendar, Clock } from 'lucide-react'
-import { Id } from '../../../convex/_generated/dataModel'
 import { Card, CardContent } from '../ui/card'
 import { Skeleton } from '../ui/skeleton'
 
@@ -26,7 +25,7 @@ function getTime(timestamp: number): string {
 }
 
 interface MatchProps {
-    _id: Id<'matches'>
+    _id: string
     _creationTime: number
     toss?: string | undefined
     innings?: number | undefined
@@ -38,7 +37,7 @@ interface MatchProps {
     botRuns?: number | undefined
     botWickets?: number
     botBalls?: number
-    teamId: Id<'teams'>
+    teamId: string
 }
 
 const getTeamScore = (match: MatchProps, innings: number): string => {
@@ -60,8 +59,9 @@ const getTeamScore = (match: MatchProps, innings: number): string => {
 }
 
 export const ListMatches = () => {
-    const { data, isLoading } = useGetMatches()
-
+    const isLoading = useMatchListsStore((state) => state.isLoading)
+    const matches = useMatchListsStore((state) => state.matches)
+    console.log('data', matches)
     if (isLoading) {
         return (
             <div className="flex flex-col gap-2">
@@ -95,10 +95,19 @@ export const ListMatches = () => {
             </div>
         )
     }
-    if (data)
+    if (matches.length == 0) {
+        return (
+            <Card className="w-full max-w-md mx-auto">
+                <CardContent className="pt-6 space-y-4">
+                    <p className="text-gray-500 text-lg">No matches found</p>
+                </CardContent>
+            </Card>
+        )
+    }
+    if (matches.length > 0)
         return (
             <div className="flex flex-col gap-2">
-                {data.map((match, index) => (
+                {matches.map((match, index) => (
                     <Card key={index} className="w-full max-w-md mx-auto">
                         <CardContent className="pt-6 space-y-4">
                             <div className="flex justify-between items-center text-sm text-gray-600">
