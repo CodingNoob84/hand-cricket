@@ -1,3 +1,4 @@
+import { getPlayers, getPlayerScore } from '@/lib/utils'
 import { Batting, Bowling, TeamData, useMatchStore } from '@/store/match-store'
 
 export const BattingPlayerCard = ({
@@ -14,10 +15,8 @@ export const BattingPlayerCard = ({
                     Batting
                 </div>
                 <div className="flex justify-between text-sm mt-2">
-                    <div>{wickets + 1} wicket</div>
-                    <div>
-                        {data.runs}({data.balls})
-                    </div>
+                    <div> {getPlayers(wickets + 1, 'bat')} </div>
+                    <div>{getPlayerScore(data.runs, data.balls, 0, 'bat')}</div>
                 </div>
             </div>
         </div>
@@ -38,9 +37,14 @@ export const BowlingPlayerCard = ({
                     Bowling
                 </div>
                 <div className="flex justify-between text-sm mt-2">
-                    <div>{overs + 1} Over</div>
+                    <div> {getPlayers(overs + 1, 'bowl')} </div>
                     <div>
-                        {data.runs}-{data.wickets}({data.balls})
+                        {getPlayerScore(
+                            data.runs,
+                            data.balls,
+                            data.wickets,
+                            'bowl'
+                        )}
                     </div>
                 </div>
             </div>

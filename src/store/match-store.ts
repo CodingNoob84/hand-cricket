@@ -323,38 +323,46 @@ const updateScore = (state: MatchStore, BotNumber: number) => {
     updatedBowlingTeam.totalBallsBowled += 1
 
     // Check if the innings has ended (either all wickets are lost or overs are completed)
-    const isInningsEnded =
+    // Check if the innings has ended (either all wickets are lost or overs are completed)
+    let isInningsEnded =
         updatedBattingTeam.totalWickets === TOTALWICKETS ||
         updatedBattingTeam.totalBallsBatted >= TOTALOVERS * BALLSPEROVER
+
+    const isTargetChased =
+        updatedBattingTeam.totalRuns > updatedBowlingTeam.totalRuns
 
     // Handle end of innings and determine game result in the second inning
     let result = state.result
     let resultBy = ''
 
     if (innings === 2) {
-        const isTargetChased =
-            updatedBattingTeam.totalRuns > updatedBowlingTeam.totalRuns
-
-        if (state.toss === 'bat') {
-            if (isTargetChased) {
+        if (isTargetChased) {
+            // Determine the match result based on which team is batting
+            if (state.toss === 'bat') {
                 result = 'defeated'
                 resultBy = `lost by ${TOTALWICKETS - updatedBattingTeam.totalWickets} wickets`
-            } else if (isInningsEnded) {
-                result = 'won'
-                resultBy = `won by ${updatedBattingTeam.totalRuns - updatedBowlingTeam.totalRuns} runs`
-            }
-        } else {
-            if (isTargetChased) {
+            } else {
                 result = 'won'
                 resultBy = `won by ${TOTALWICKETS - updatedBattingTeam.totalWickets} wickets`
-            } else if (isInningsEnded) {
+            }
+        } else if (isInningsEnded) {
+            // Handle the scenario where the innings ends without chasing the target
+            const runDifference = Math.abs(
+                updatedBattingTeam.totalRuns - updatedBowlingTeam.totalRuns
+            )
+            if (state.toss === 'bat') {
+                result = 'won'
+                resultBy = `won by ${runDifference} runs`
+            } else {
                 result = 'defeated'
-                resultBy = `lost by ${updatedBowlingTeam.totalRuns - updatedBattingTeam.totalRuns} runs`
+                resultBy = `lost by ${runDifference} runs`
             }
         }
     }
 
-    // Switch to second innings if the first inning is ended
+    if (innings == 2) {
+        isInningsEnded = isInningsEnded || isTargetChased
+    }
 
     // Update state for current inning
     return {

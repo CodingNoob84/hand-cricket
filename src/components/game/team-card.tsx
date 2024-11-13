@@ -1,15 +1,9 @@
 'use client'
-import { getInitials } from '@/lib/utils'
+import { convertToOvers, getInitials } from '@/lib/utils'
 
 import { TeamData, useMatchStore } from '@/store/match-store'
 import Image from 'next/image'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-
-const convertToOvers = (balls: number): string => {
-    const overs = Math.floor(balls / 6)
-    const remainingBalls = balls % 6
-    return `${overs}.${remainingBalls}`
-}
 
 export const TeamCard = ({ teamData }: { teamData: TeamData }) => {
     return (

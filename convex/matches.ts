@@ -1,3 +1,4 @@
+import { getAuthUserId } from '@convex-dev/auth/server'
 import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 
@@ -107,5 +108,27 @@ export const updateMatch = mutation({
         })
 
         return { success: true, message: 'Match updated successfully' }
+    },
+})
+
+export const getMatches = query({
+    args: {},
+    handler: async (ctx) => {
+        const { db, auth } = ctx
+
+        // Assuming getAuthUserId is a utility function to fetch the current authenticated user's ID
+        const userId = await getAuthUserId(ctx)
+
+        if (!userId) {
+            throw new Error('User not authenticated')
+        }
+
+        // Query the database to get all matches for the authenticated user
+        const matches = await db
+            .query('matches')
+            .filter((q) => q.eq(q.field('userId'), userId))
+            .collect()
+
+        return matches
     },
 })
